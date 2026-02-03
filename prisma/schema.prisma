@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Customer {
+  id          String   @id @default(uuid())
+  name        String
+  address     String?
+  mobile      String   @unique
+  gstNumber   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  invoices    Invoice[]
+  
+  @@map("customers")
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  companyName   String
+  batchNo       String   @unique
+  expiryDate    DateTime
+  packing       String
+  hsnCode       String
+  gstPercentage Float    @default(18.0)
+  purchasePrice Float
+  sellingPrice  Float
+  stockQuantity Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  invoiceItems  InvoiceItem[]
+  
+  @@map("products")
+}
+
+model Invoice {
+  id              String   @id @default(uuid())
+  invoiceNumber   String   @unique
+  date            DateTime @default(now())
+  customerId      String   
+  subtotal        Float
+  cgst            Float    @default(0)
+  sgst            Float    @default(0)
+  totalGst        Float    @default(0)
+  freight         Float    @default(0)
+  discount        Float    @default(0)
+  grandTotal      Float
+  amountInWords   String
+  status          String   @default("paid")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  customer        Customer @relation(fields: [customerId], references: [id])
+  items           InvoiceItem[]
+  
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id            String   @id @default(uuid())
+  invoiceId     String   
+  productId     String   
+  quantity      Int
+  rate          Float
+  amount        Float
+  gstPercentage Float
+  cgst          Float
+  sgst          Float
+  totalAmount   Float
+  createdAt     DateTime @default(now())
+  
+  invoice       Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  product       Product @relation(fields: [productId], references: [id])
+  
+  @@map("invoice_items")
+}

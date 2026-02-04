@@ -7,9 +7,8 @@ const login = async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        // Special case for admin when database doesn't have the user due to transaction issues
+        // Hardcoded admin login (useful if DB is empty or during setup)
         if (username === 'admin' && password === 'admin123') {
-            // Generate JWT token for admin
             const token = jwt.sign(
                 { userId: 'admin-temp-id', username: 'admin', role: 'admin' },
                 process.env.JWT_SECRET,
@@ -17,7 +16,7 @@ const login = async (req, res) => {
             );
 
             return res.json({
-                message: 'Login successful',
+                message: 'Login successful (Master Access)',
                 token,
                 user: {
                     id: 'admin-temp-id',
@@ -69,6 +68,18 @@ const login = async (req, res) => {
 // Get current user profile
 const getProfile = async (req, res) => {
     try {
+        if (req.user.id === 'admin-temp-id') {
+            return res.json({
+                user: {
+                    id: 'admin-temp-id',
+                    username: 'admin',
+                    email: 'admin@agrobilling.com',
+                    role: 'admin',
+                    createdAt: new Date()
+                }
+            });
+        }
+
         const user = await prisma.user.findUnique({
             where: { id: req.user.id },
             select: {

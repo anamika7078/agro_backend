@@ -11,8 +11,8 @@ const login = async (req, res) => {
         if (username === 'admin' && password === 'admin123') {
             const token = jwt.sign(
                 { userId: 'admin-temp-id', username: 'admin', role: 'admin' },
-                process.env.JWT_SECRET,
-                { expiresIn: process.env.JWT_EXPIRES_IN }
+                process.env.JWT_SECRET || 'fallback-secret-key-change-it',
+                { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
             );
 
             return res.json({
@@ -45,8 +45,8 @@ const login = async (req, res) => {
         // Generate JWT token
         const token = jwt.sign(
             { userId: user.id, username: user.username, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_EXPIRES_IN }
+            process.env.JWT_SECRET || 'fallback-secret-key-change-it',
+            { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
         );
 
         res.json({

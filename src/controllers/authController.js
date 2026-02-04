@@ -61,7 +61,19 @@ const login = async (req, res) => {
         });
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ error: 'Server error during login' });
+
+        // Provide more detail about the error to help with debugging
+        let message = 'Server error during login';
+        if (process.env.NODE_ENV !== 'production') {
+            message += `: ${error.message}`;
+        } else if (!process.env.JWT_SECRET) {
+            message = 'Configuration error: JWT_SECRET is missing on the server';
+        }
+
+        res.status(500).json({
+            error: 'Server error during login',
+            message: message
+        });
     }
 };
 

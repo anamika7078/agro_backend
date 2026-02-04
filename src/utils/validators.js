@@ -80,13 +80,15 @@ const validateProduct = [
 // Invoice validation
 const validateInvoice = [
     body('customerId')
-        .isInt({ min: 1 })
+        .notEmpty()
+        .isUUID()
         .withMessage('Valid customer ID is required'),
     body('items')
         .isArray({ min: 1 })
         .withMessage('At least one item is required'),
     body('items.*.productId')
-        .isInt({ min: 1 })
+        .notEmpty()
+        .isUUID()
         .withMessage('Valid product ID is required for each item'),
     body('items.*.quantity')
         .isInt({ min: 1 })

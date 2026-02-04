@@ -18,7 +18,8 @@ const allowedOrigins = [
   'http://127.0.0.1:3000',
   'http://localhost:5173',
   'http://127.0.0.1:5173',
-  'https://agro-client.vercel.app',
+  // 'https://agro-client.vercel.app',
+  'https://agroclient.vercel.app',
   ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [])
 ];
 

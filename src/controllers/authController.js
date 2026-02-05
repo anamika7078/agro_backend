@@ -17,7 +17,6 @@ const login = async (req, res) => {
 
             return res.json({
                 message: 'Login successful (Master Access)',
-                token,
                 user: {
                     id: 'admin-temp-id',
                     username: 'admin',
@@ -51,7 +50,6 @@ const login = async (req, res) => {
 
         res.json({
             message: 'Login successful',
-            token,
             user: {
                 id: user.id,
                 username: user.username,
